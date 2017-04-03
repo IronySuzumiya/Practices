@@ -84,10 +84,10 @@ namespace URLParser
 
         static bool IsGroupDivSymbol(char** reader)
         {
-            if(*reader != null && **reader != '\0' && **reader == '-')
+            if(**reader == '-')
             {
                 (*reader)++;
-                if(*reader != null && **reader == '-')
+                if(**reader == '-')
                 {
                     (*reader)++;
                     return true;
@@ -97,7 +97,7 @@ namespace URLParser
                     return false;
                 }
             }
-            else if(*reader != null && **reader != '\0')
+            else if( **reader != '\0')
             {
                 return false;
             }
@@ -111,7 +111,7 @@ namespace URLParser
         {
             var reader = &input;
             var output = new List<string[]>();
-            while(*reader != null && **reader != '\0')
+            while(**reader != '\0')
             {
                 var group = new List<string>();
                 do
