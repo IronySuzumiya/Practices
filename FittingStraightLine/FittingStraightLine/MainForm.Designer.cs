@@ -29,21 +29,32 @@
         private void InitializeComponent()
         {
             this.pnlImage = new System.Windows.Forms.Panel();
+            this.cmbBitmaps = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // pnlImage
             // 
-            this.pnlImage.Location = new System.Drawing.Point(12, 12);
+            this.pnlImage.Location = new System.Drawing.Point(12, 45);
             this.pnlImage.Name = "pnlImage";
             this.pnlImage.Size = new System.Drawing.Size(464, 294);
             this.pnlImage.TabIndex = 0;
             this.pnlImage.Paint += new System.Windows.Forms.PaintEventHandler(this.pnlImage_Paint);
             // 
+            // cmbBitmaps
+            // 
+            this.cmbBitmaps.FormattingEnabled = true;
+            this.cmbBitmaps.Location = new System.Drawing.Point(12, 12);
+            this.cmbBitmaps.Name = "cmbBitmaps";
+            this.cmbBitmaps.Size = new System.Drawing.Size(136, 20);
+            this.cmbBitmaps.TabIndex = 1;
+            this.cmbBitmaps.SelectedIndexChanged += new System.EventHandler(this.cmbBitmaps_SelectedIndexChanged);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(488, 318);
+            this.ClientSize = new System.Drawing.Size(488, 351);
+            this.Controls.Add(this.cmbBitmaps);
             this.Controls.Add(this.pnlImage);
             this.Name = "MainForm";
             this.Text = "Fitting Straight Line";
@@ -55,6 +66,7 @@
         #endregion
 
         private System.Windows.Forms.Panel pnlImage;
+        private System.Windows.Forms.ComboBox cmbBitmaps;
     }
 }
 

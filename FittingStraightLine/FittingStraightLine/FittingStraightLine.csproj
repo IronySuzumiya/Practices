@@ -48,6 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ImageProcesser.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -60,7 +61,7 @@
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -81,66 +82,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="大s.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="大弯1.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="大弯2.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="大弯3.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="坡道1.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="坡道2.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="坡道3.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="坡道4.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="十字.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="十字2.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="十字3.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="十字4.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="小s.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="小弯.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="圆环1.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="圆环2.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="圆环3.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="障碍1.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="障碍2.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="直道.bmp" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

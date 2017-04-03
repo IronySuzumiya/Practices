@@ -22,7 +22,7 @@ namespace FittingStraightLine.Properties {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Resources {
+    public class Resources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace FittingStraightLine.Properties {
         ///   返回此类使用的缓存的 ResourceManager 实例。
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("FittingStraightLine.Properties.Resources", typeof(Resources).Assembly);
@@ -51,7 +51,7 @@ namespace FittingStraightLine.Properties {
         ///   重写当前线程的 CurrentUICulture 属性。
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -63,7 +63,7 @@ namespace FittingStraightLine.Properties {
         /// <summary>
         ///   查找 System.Drawing.Bitmap 类型的本地化资源。
         /// </summary>
-        internal static System.Drawing.Bitmap 十字 {
+        public static System.Drawing.Bitmap 十字 {
             get {
                 object obj = ResourceManager.GetObject("十字", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -73,7 +73,7 @@ namespace FittingStraightLine.Properties {
         /// <summary>
         ///   查找 System.Drawing.Bitmap 类型的本地化资源。
         /// </summary>
-        internal static System.Drawing.Bitmap 十字2 {
+        public static System.Drawing.Bitmap 十字2 {
             get {
                 object obj = ResourceManager.GetObject("十字2", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -83,7 +83,7 @@ namespace FittingStraightLine.Properties {
         /// <summary>
         ///   查找 System.Drawing.Bitmap 类型的本地化资源。
         /// </summary>
-        internal static System.Drawing.Bitmap 十字3 {
+        public static System.Drawing.Bitmap 十字3 {
             get {
                 object obj = ResourceManager.GetObject("十字3", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -93,7 +93,7 @@ namespace FittingStraightLine.Properties {
         /// <summary>
         ///   查找 System.Drawing.Bitmap 类型的本地化资源。
         /// </summary>
-        internal static System.Drawing.Bitmap 十字4 {
+        public static System.Drawing.Bitmap 十字4 {
             get {
                 object obj = ResourceManager.GetObject("十字4", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -103,7 +103,7 @@ namespace FittingStraightLine.Properties {
         /// <summary>
         ///   查找 System.Drawing.Bitmap 类型的本地化资源。
         /// </summary>
-        internal static System.Drawing.Bitmap 圆环1 {
+        public static System.Drawing.Bitmap 圆环1 {
             get {
                 object obj = ResourceManager.GetObject("圆环1", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -113,7 +113,7 @@ namespace FittingStraightLine.Properties {
         /// <summary>
         ///   查找 System.Drawing.Bitmap 类型的本地化资源。
         /// </summary>
-        internal static System.Drawing.Bitmap 圆环2 {
+        public static System.Drawing.Bitmap 圆环2 {
             get {
                 object obj = ResourceManager.GetObject("圆环2", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -123,7 +123,7 @@ namespace FittingStraightLine.Properties {
         /// <summary>
         ///   查找 System.Drawing.Bitmap 类型的本地化资源。
         /// </summary>
-        internal static System.Drawing.Bitmap 圆环3 {
+        public static System.Drawing.Bitmap 圆环3 {
             get {
                 object obj = ResourceManager.GetObject("圆环3", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -133,7 +133,7 @@ namespace FittingStraightLine.Properties {
         /// <summary>
         ///   查找 System.Drawing.Bitmap 类型的本地化资源。
         /// </summary>
-        internal static System.Drawing.Bitmap 坡道1 {
+        public static System.Drawing.Bitmap 坡道1 {
             get {
                 object obj = ResourceManager.GetObject("坡道1", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -143,7 +143,7 @@ namespace FittingStraightLine.Properties {
         /// <summary>
         ///   查找 System.Drawing.Bitmap 类型的本地化资源。
         /// </summary>
-        internal static System.Drawing.Bitmap 坡道2 {
+        public static System.Drawing.Bitmap 坡道2 {
             get {
                 object obj = ResourceManager.GetObject("坡道2", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -153,7 +153,7 @@ namespace FittingStraightLine.Properties {
         /// <summary>
         ///   查找 System.Drawing.Bitmap 类型的本地化资源。
         /// </summary>
-        internal static System.Drawing.Bitmap 坡道3 {
+        public static System.Drawing.Bitmap 坡道3 {
             get {
                 object obj = ResourceManager.GetObject("坡道3", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -163,7 +163,7 @@ namespace FittingStraightLine.Properties {
         /// <summary>
         ///   查找 System.Drawing.Bitmap 类型的本地化资源。
         /// </summary>
-        internal static System.Drawing.Bitmap 坡道4 {
+        public static System.Drawing.Bitmap 坡道4 {
             get {
                 object obj = ResourceManager.GetObject("坡道4", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -173,7 +173,7 @@ namespace FittingStraightLine.Properties {
         /// <summary>
         ///   查找 System.Drawing.Bitmap 类型的本地化资源。
         /// </summary>
-        internal static System.Drawing.Bitmap 大s {
+        public static System.Drawing.Bitmap 大s {
             get {
                 object obj = ResourceManager.GetObject("大s", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -183,7 +183,7 @@ namespace FittingStraightLine.Properties {
         /// <summary>
         ///   查找 System.Drawing.Bitmap 类型的本地化资源。
         /// </summary>
-        internal static System.Drawing.Bitmap 大弯1 {
+        public static System.Drawing.Bitmap 大弯1 {
             get {
                 object obj = ResourceManager.GetObject("大弯1", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -193,7 +193,7 @@ namespace FittingStraightLine.Properties {
         /// <summary>
         ///   查找 System.Drawing.Bitmap 类型的本地化资源。
         /// </summary>
-        internal static System.Drawing.Bitmap 大弯2 {
+        public static System.Drawing.Bitmap 大弯2 {
             get {
                 object obj = ResourceManager.GetObject("大弯2", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -203,7 +203,7 @@ namespace FittingStraightLine.Properties {
         /// <summary>
         ///   查找 System.Drawing.Bitmap 类型的本地化资源。
         /// </summary>
-        internal static System.Drawing.Bitmap 大弯3 {
+        public static System.Drawing.Bitmap 大弯3 {
             get {
                 object obj = ResourceManager.GetObject("大弯3", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -213,7 +213,7 @@ namespace FittingStraightLine.Properties {
         /// <summary>
         ///   查找 System.Drawing.Bitmap 类型的本地化资源。
         /// </summary>
-        internal static System.Drawing.Bitmap 小s {
+        public static System.Drawing.Bitmap 小s {
             get {
                 object obj = ResourceManager.GetObject("小s", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -223,7 +223,7 @@ namespace FittingStraightLine.Properties {
         /// <summary>
         ///   查找 System.Drawing.Bitmap 类型的本地化资源。
         /// </summary>
-        internal static System.Drawing.Bitmap 小弯 {
+        public static System.Drawing.Bitmap 小弯 {
             get {
                 object obj = ResourceManager.GetObject("小弯", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -233,7 +233,7 @@ namespace FittingStraightLine.Properties {
         /// <summary>
         ///   查找 System.Drawing.Bitmap 类型的本地化资源。
         /// </summary>
-        internal static System.Drawing.Bitmap 直道 {
+        public static System.Drawing.Bitmap 直道 {
             get {
                 object obj = ResourceManager.GetObject("直道", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -243,7 +243,7 @@ namespace FittingStraightLine.Properties {
         /// <summary>
         ///   查找 System.Drawing.Bitmap 类型的本地化资源。
         /// </summary>
-        internal static System.Drawing.Bitmap 障碍1 {
+        public static System.Drawing.Bitmap 障碍1 {
             get {
                 object obj = ResourceManager.GetObject("障碍1", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -253,7 +253,7 @@ namespace FittingStraightLine.Properties {
         /// <summary>
         ///   查找 System.Drawing.Bitmap 类型的本地化资源。
         /// </summary>
-        internal static System.Drawing.Bitmap 障碍2 {
+        public static System.Drawing.Bitmap 障碍2 {
             get {
                 object obj = ResourceManager.GetObject("障碍2", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
