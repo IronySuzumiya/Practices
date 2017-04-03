@@ -24,7 +24,7 @@ namespace FittingStraightLine
 
         private void pnlImage_Paint(object sender, PaintEventArgs e)
         {
-            e.Graphics.ScaleTransform(2.2f, 5.9f);
+            e.Graphics.ScaleTransform(1.9f, 5.5f);
             e.Graphics.DrawImage(images[cmbBitmaps.SelectedIndex], 0, 0);
         }
 

@@ -36,7 +36,7 @@
             // 
             this.pnlImage.Location = new System.Drawing.Point(12, 45);
             this.pnlImage.Name = "pnlImage";
-            this.pnlImage.Size = new System.Drawing.Size(464, 294);
+            this.pnlImage.Size = new System.Drawing.Size(428, 276);
             this.pnlImage.TabIndex = 0;
             this.pnlImage.Paint += new System.Windows.Forms.PaintEventHandler(this.pnlImage_Paint);
             // 
@@ -53,7 +53,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(488, 351);
+            this.ClientSize = new System.Drawing.Size(452, 332);
             this.Controls.Add(this.cmbBitmaps);
             this.Controls.Add(this.pnlImage);
             this.Name = "MainForm";
