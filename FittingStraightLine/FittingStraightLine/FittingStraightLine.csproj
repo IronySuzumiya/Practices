@@ -83,6 +83,66 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\大s.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\大弯1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\大弯2.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\大弯3.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\坡道1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\坡道2.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\坡道3.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\坡道4.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\十字.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\十字2.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\十字3.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\十字4.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\小s.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\小弯.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\圆环1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\圆环2.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\圆环3.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\障碍1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\障碍2.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\直道.bmp" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

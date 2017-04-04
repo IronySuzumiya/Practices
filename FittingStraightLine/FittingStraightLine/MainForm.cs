@@ -37,7 +37,7 @@ namespace FittingStraightLine
                 {
                     cmbBitmaps.Items.Add(f.Name);
                     var bitmap = f.GetValue(null) as Bitmap;
-                    ImageProcesser.Process(bitmap);
+                    ImageProcesser.Process(bitmap, f.Name);
                     images.Add(bitmap);
                 }
             }
