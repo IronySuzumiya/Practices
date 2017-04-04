@@ -153,7 +153,54 @@ namespace FittingStraightLine
                 isCurve = true;
             }
 
-            if(!isCurve)
+            if (isCurve)
+            {
+                int row;
+                for (row = data.Height - 1; row > 8; --row)
+                {
+                    var color = (byte*)data.Scan0 + row * data.Stride + middleLine[row] * 3;
+                    if (color[0] == 0xff)
+                    {
+                        break;
+                    }
+                }
+                var leftBorderNotFoundCnt = 0;
+                var rightBorderNotFoundCnt = 0;
+                for (int row_ = row; row_ > row - 12; --row_)
+                {
+                    if(leftBorder[row_] == 0)
+                    {
+                        ++leftBorderNotFoundCnt;
+                    }
+                    if(rightBorder[row_] == data.Width - 1)
+                    {
+                        ++rightBorderNotFoundCnt;
+                    }
+                }
+                if(leftBorderNotFoundCnt > rightBorderNotFoundCnt && leftBorderNotFoundCnt > 6)
+                {
+                    for (int row_ = data.Height - 1; row_ > row; --row_)
+                    {
+                        middleLine[row_] = 0;
+                    }
+                    for (int cnt = 0; cnt < 12; ++cnt)
+                    {
+                        middleLine[row - cnt] = cnt * middleLine[row - 12] / 12;
+                    }
+                }
+                else if(rightBorderNotFoundCnt > 6)
+                {
+                    for (int row_ = data.Height - 1; row_ > row; --row_)
+                    {
+                        middleLine[row_] = data.Width - 1;
+                    }
+                    for (int cnt = 0; cnt < 12; ++cnt)
+                    {
+                        middleLine[row - cnt] = data.Width - 1 - cnt * (data.Width - 1 - middleLine[row - 12]) / 12;
+                    }
+                }
+            }
+            else
             {
                 var leftCompensateStart = data.Height - 1;
                 var rightCompensateStart = data.Height - 1;
@@ -162,20 +209,24 @@ namespace FittingStraightLine
 
                 {
                     int row = 6;
-                    while (row < data.Height && leftBorder[row] != 0 && Math.Abs(leftSlope[row] - leftSlope[row - 1]) < 3) { ++row; }
+                    while (row < data.Height && leftBorder[row] != 0
+                        && Math.Abs(leftSlope[row] - leftSlope[row - 1]) < 3) { ++row; }
                     leftCompensateStart = row;
                     row += 5;
-                    while (row < data.Height && (leftBorder[row] == 0 || Math.Abs(leftSlope[row] - leftSlope[row - 1]) >= 3)) { ++row; }
+                    while (row < data.Height
+                        && (leftBorder[row] == 0 || Math.Abs(leftSlope[row] - leftSlope[row - 1]) >= 3)) { ++row; }
                     row += 4;
                     leftCompensateEnd = Math.Min(row, data.Height - 1);
                 }
 
                 {
                     int row = 6;
-                    while (row < data.Height && rightBorder[row] != data.Width - 1 && Math.Abs(rightSlope[row] - rightSlope[row - 1]) < 3) { ++row; }
+                    while (row < data.Height && rightBorder[row] != data.Width - 1
+                        && Math.Abs(rightSlope[row] - rightSlope[row - 1]) < 3) { ++row; }
                     rightCompensateStart = row;
                     row += 5;
-                    while (row < data.Height && (rightBorder[row] == data.Width - 1 || Math.Abs(rightSlope[row] - rightSlope[row - 1]) >= 3)) { ++row; }
+                    while (row < data.Height
+                        && (rightBorder[row] == data.Width - 1 || Math.Abs(rightSlope[row] - rightSlope[row - 1]) >= 3)) { ++row; }
                     row += 4;
                     rightCompensateEnd = Math.Min(row, data.Height - 1);
                 }
@@ -189,12 +240,15 @@ namespace FittingStraightLine
                 {
                     rightBorder[row] = row * rightSlope[rightCompensateStart - 5] + rightZero[rightCompensateStart - 5];
                 }
+
+                for (int row = 0; row < data.Height; ++row)
+                {
+                    middleLine[row] = (leftBorder[row] + rightBorder[row]) / 2;
+                }
             }
 
             for (int row = 0; row < data.Height; ++row)
             {
-                middleLine[row] = (leftBorder[row] + rightBorder[row]) / 2;
-
                 byte* color;
                 color = (byte*)data.Scan0 + row * data.Stride + middleLine[row] * 3;
                 color[0] = 0xfe;
