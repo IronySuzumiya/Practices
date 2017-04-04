@@ -12,11 +12,11 @@ namespace FittingStraightLine
     {
         public static void Process(Bitmap bitmap, string name = "")
         {
-            ClearHighlighting(bitmap, name);
+            Preprocess(bitmap);
             UserFunction(bitmap, name);
         }
 
-        private static void ClearHighlighting(Bitmap bitmap, string name = "")
+        private static void Preprocess(Bitmap bitmap)
         {
             var data = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height)
                 , ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
@@ -25,14 +25,6 @@ namespace FittingStraightLine
                 for (int i = 0; i < data.Width; ++i)
                 {
                     var color = (byte*)data.Scan0 + j * data.Stride + i * 3;
-                    if(color[0] == 0xfe)
-                    {
-
-                    }
-                    else
-                    {
-
-                    }
                     switch (color[0])
                     {
                         case 0x20:
@@ -59,6 +51,14 @@ namespace FittingStraightLine
                     break;
                 }
             }
+            for(int i = 0; i < data.Width; ++i)
+            {
+                var color = (byte*)data.Scan0 + (data.Height - 1) * data.Stride + i * 3;
+                var colorToCopy = (byte*)data.Scan0 + (data.Height - 2) * data.Stride + i * 3;
+                color[0] = colorToCopy[0];
+                color[1] = colorToCopy[1];
+                color[2] = colorToCopy[2];
+            }
             bitmap.UnlockBits(data);
         }
 
@@ -67,6 +67,7 @@ namespace FittingStraightLine
             bitmap.RotateFlip(RotateFlipType.Rotate180FlipX);
             var data = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height)
                 , ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+
             var rightBorder = new int[data.Height];
             var leftBorder = new int[data.Height];
             var middleLine = new int[data.Height];
@@ -76,9 +77,6 @@ namespace FittingStraightLine
             var rightZero = new int[data.Height];
             var middleSlope = new int[data.Height];
             var middleZero = new int[data.Height];
-
-            var correctLeftRow = -1;
-            var correctRightRow = -1;
 
             var borderSearchStart = data.Width / 2;
 
@@ -111,6 +109,8 @@ namespace FittingStraightLine
                     }
                 }
 
+                borderSearchStart = middleLine[row] = (leftBorder[row] + rightBorder[row]) / 2;
+
                 if (row >= 4)
                 {
                     double leftSlopeX = 0, leftSlopeA = 0, leftSlopeB = 0;
@@ -136,43 +136,75 @@ namespace FittingStraightLine
                     middleSlope[row] = (int)((middleSlopeA - middleSlopeB) / 10.0);
                     middleZero[row] = (int)((middleSlopeX / 5) - middleSlope[row] * (row - 2));
                 }
+            }
 
-                if (row > 5)
+            bool isCurve = false;
+            int blackCnt = 0;
+            for(int row = data.Height - 1; row >= 40; --row)
+            {
+                var color = (byte*)data.Scan0 + row * data.Stride + middleLine[row] * 3;
+                if(color[0] == 0x00)
                 {
-                    if (leftBorder[row] == 0 || correctLeftRow != -1
-                        || leftSlope[row - 1] == 0 ? leftSlope[row] < 0 : Math.Abs(leftSlope[row] / leftSlope[row - 1]) > 2)
-                    {
-                        if (correctLeftRow == -1)
-                        {
-                            correctLeftRow = row - 5;
-                            while (correctLeftRow > 0 && leftSlope[correctLeftRow] == 0) { correctLeftRow--; }
-                        }
-                        leftBorder[row] = row * leftSlope[correctLeftRow] + leftZero[correctLeftRow];
-                    }
-                    if (rightBorder[row] == data.Width - 1 || correctRightRow != -1
-                        || rightSlope[row - 1] == 0 ? rightSlope[row] > 0 : Math.Abs(rightSlope[row] / rightSlope[row - 1]) > 2)
-                    {
-                        if (correctRightRow == -1)
-                        {
-                            correctRightRow = row - 5;
-                        }
-                        rightBorder[row] = row * rightSlope[correctRightRow] + rightZero[correctRightRow];
-                    }
+                    ++blackCnt;
+                }
+            }
+            if(blackCnt > 5)
+            {
+                isCurve = true;
+            }
+
+            if(!isCurve)
+            {
+                var leftCompensateStart = data.Height - 1;
+                var rightCompensateStart = data.Height - 1;
+                var leftCompensateEnd = data.Height - 1;
+                var rightCompensateEnd = data.Height - 1;
+
+                {
+                    int row = 6;
+                    while (row < data.Height && leftBorder[row] != 0 && Math.Abs(leftSlope[row] - leftSlope[row - 1]) < 3) { ++row; }
+                    leftCompensateStart = row;
+                    row += 5;
+                    while (row < data.Height && (leftBorder[row] == 0 || Math.Abs(leftSlope[row] - leftSlope[row - 1]) >= 3)) { ++row; }
+                    row += 4;
+                    leftCompensateEnd = Math.Min(row, data.Height - 1);
                 }
 
                 {
-                    borderSearchStart = middleLine[row] = (leftBorder[row] + rightBorder[row]) / 2;
-                    byte* color;
-                    color = (byte*)data.Scan0 + row * data.Stride + middleLine[row] * 3;
-                    color[0] = 0xfe;
-                    color[1] = color[2] = 0;
-                    color = (byte*)data.Scan0 + row * data.Stride + leftBorder[row] * 3;
-                    color[0] = 0xfe;
-                    color[1] = color[2] = 0;
-                    color = (byte*)data.Scan0 + row * data.Stride + rightBorder[row] * 3;
-                    color[0] = 0xfe;
-                    color[1] = color[2] = 0;
+                    int row = 6;
+                    while (row < data.Height && rightBorder[row] != data.Width - 1 && Math.Abs(rightSlope[row] - rightSlope[row - 1]) < 3) { ++row; }
+                    rightCompensateStart = row;
+                    row += 5;
+                    while (row < data.Height && (rightBorder[row] == data.Width - 1 || Math.Abs(rightSlope[row] - rightSlope[row - 1]) >= 3)) { ++row; }
+                    row += 4;
+                    rightCompensateEnd = Math.Min(row, data.Height - 1);
                 }
+
+                for (int row = leftCompensateStart; row < leftCompensateEnd; ++row)
+                {
+                    leftBorder[row] = row * leftSlope[leftCompensateStart - 5] + leftZero[leftCompensateStart - 5];
+                }
+
+                for (int row = rightCompensateStart; row < rightCompensateEnd; ++row)
+                {
+                    rightBorder[row] = row * rightSlope[rightCompensateStart - 5] + rightZero[rightCompensateStart - 5];
+                }
+            }
+
+            for (int row = 0; row < data.Height; ++row)
+            {
+                middleLine[row] = (leftBorder[row] + rightBorder[row]) / 2;
+
+                byte* color;
+                color = (byte*)data.Scan0 + row * data.Stride + middleLine[row] * 3;
+                color[0] = 0xfe;
+                color[1] = color[2] = 0;
+                color = (byte*)data.Scan0 + row * data.Stride + leftBorder[row] * 3;
+                color[0] = 0xfe;
+                color[1] = color[2] = 0;
+                color = (byte*)data.Scan0 + row * data.Stride + rightBorder[row] * 3;
+                color[0] = 0xfe;
+                color[1] = color[2] = 0;
             }
 
             bitmap.UnlockBits(data);
