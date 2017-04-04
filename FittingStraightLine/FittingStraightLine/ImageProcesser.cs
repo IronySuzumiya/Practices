@@ -62,204 +62,37 @@ namespace FittingStraightLine
             bitmap.UnlockBits(data);
         }
 
+        enum RoadType
+        {
+            Unknown,
+            Curve,
+            CrossRoad,
+            Ring
+        };
+
         private static void UserFunction(Bitmap bitmap, string name = "")
         {
             bitmap.RotateFlip(RotateFlipType.Rotate180FlipX);
             var data = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height)
                 , ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
 
-            var rightBorder = new int[data.Height];
-            var leftBorder = new int[data.Height];
-            var middleLine = new int[data.Height];
-            var leftSlope = new int[data.Height];
-            var rightSlope = new int[data.Height];
-            var leftZero = new int[data.Height];
-            var rightZero = new int[data.Height];
-            var middleSlope = new int[data.Height];
-            var middleZero = new int[data.Height];
+            var roadFeatures = new RoadFeatures(data.Height, data.Width, data);
 
-            var borderSearchStart = data.Width / 2;
+            roadFeatures.SearchForBorders();
 
-            for (int i = 0; i < data.Height; ++i)
+            roadFeatures.CalculateSlopes();
+
+            // Just for now
+            if(roadFeatures.IsCurve)
             {
-                rightBorder[i] = data.Width - 1;
-                rightZero[i] = data.Width - 1;
-                middleZero[i] = data.Width / 2;
-            }
-
-            for (int row = 0; row < data.Height; ++row)
-            {
-                for (int col = borderSearchStart - 1; col >= 0; --col)
-                {
-                    var color = (byte*)data.Scan0 + row * data.Stride + col * 3;
-                    if (color[0] == 0x00 && color[3] == 0xff)
-                    {
-                        leftBorder[row] = col + 1;
-                        break;
-                    }
-                }
-
-                for (int col = borderSearchStart; col < data.Width - 1; ++col)
-                {
-                    var color = (byte*)data.Scan0 + row * data.Stride + col * 3;
-                    if (color[0] == 0xff && color[3] == 0x00)
-                    {
-                        rightBorder[row] = col;
-                        break;
-                    }
-                }
-
-                borderSearchStart = middleLine[row] = (leftBorder[row] + rightBorder[row]) / 2;
-
-                if (row >= 4)
-                {
-                    double leftSlopeX = 0, leftSlopeA = 0, leftSlopeB = 0;
-                    double rightSlopeX = 0, rightSlopeA = 0, rightSlopeB = 0;
-                    double middleSlopeX = 0, middleSlopeA = 0, middleSlopeB = 0;
-                    for (int col = row - 4; col <= row; ++col)
-                    {
-                        leftSlopeX += leftBorder[col];
-                        leftSlopeA += col * leftBorder[col];
-                        rightSlopeX += rightBorder[col];
-                        rightSlopeA += col * rightBorder[col];
-                        middleSlopeX += middleLine[col];
-                        middleSlopeA += col * middleLine[col];
-                    }
-                    leftSlopeB = (row - 2) * leftSlopeX;
-                    rightSlopeB = (row - 2) * rightSlopeX;
-                    middleSlopeB = (row - 2) * middleSlopeX;
-
-                    leftSlope[row] = (int)((leftSlopeA - leftSlopeB) / 10.0);
-                    leftZero[row] = (int)((leftSlopeX / 5) - leftSlope[row] * (row - 2));
-                    rightSlope[row] = (int)((rightSlopeA - rightSlopeB) / 10.0);
-                    rightZero[row] = (int)((rightSlopeX / 5) - rightSlope[row] * (row - 2));
-                    middleSlope[row] = (int)((middleSlopeA - middleSlopeB) / 10.0);
-                    middleZero[row] = (int)((middleSlopeX / 5) - middleSlope[row] * (row - 2));
-                }
-            }
-
-            bool isCurve = false;
-            int blackCnt = 0;
-            for(int row = data.Height - 1; row >= 40; --row)
-            {
-                var color = (byte*)data.Scan0 + row * data.Stride + middleLine[row] * 3;
-                if(color[0] == 0x00)
-                {
-                    ++blackCnt;
-                }
-            }
-            if(blackCnt > 5)
-            {
-                isCurve = true;
-            }
-
-            if (isCurve)
-            {
-                int row;
-                for (row = data.Height - 1; row > 8; --row)
-                {
-                    var color = (byte*)data.Scan0 + row * data.Stride + middleLine[row] * 3;
-                    if (color[0] == 0xff)
-                    {
-                        break;
-                    }
-                }
-                var leftBorderNotFoundCnt = 0;
-                var rightBorderNotFoundCnt = 0;
-                for (int row_ = row; row_ > row - 12; --row_)
-                {
-                    if(leftBorder[row_] == 0)
-                    {
-                        ++leftBorderNotFoundCnt;
-                    }
-                    if(rightBorder[row_] == data.Width - 1)
-                    {
-                        ++rightBorderNotFoundCnt;
-                    }
-                }
-                if(leftBorderNotFoundCnt > rightBorderNotFoundCnt && leftBorderNotFoundCnt > 6)
-                {
-                    for (int row_ = data.Height - 1; row_ > row; --row_)
-                    {
-                        middleLine[row_] = 0;
-                    }
-                    for (int cnt = 0; cnt < 12; ++cnt)
-                    {
-                        middleLine[row - cnt] = cnt * middleLine[row - 12] / 12;
-                    }
-                }
-                else if(rightBorderNotFoundCnt > 6)
-                {
-                    for (int row_ = data.Height - 1; row_ > row; --row_)
-                    {
-                        middleLine[row_] = data.Width - 1;
-                    }
-                    for (int cnt = 0; cnt < 12; ++cnt)
-                    {
-                        middleLine[row - cnt] = data.Width - 1 - cnt * (data.Width - 1 - middleLine[row - 12]) / 12;
-                    }
-                }
+                roadFeatures.CompensateCurve();
             }
             else
             {
-                var leftCompensateStart = data.Height - 1;
-                var rightCompensateStart = data.Height - 1;
-                var leftCompensateEnd = data.Height - 1;
-                var rightCompensateEnd = data.Height - 1;
-
-                {
-                    int row = 6;
-                    while (row < data.Height && leftBorder[row] != 0
-                        && Math.Abs(leftSlope[row] - leftSlope[row - 1]) < 3) { ++row; }
-                    leftCompensateStart = row;
-                    row += 5;
-                    while (row < data.Height
-                        && (leftBorder[row] == 0 || Math.Abs(leftSlope[row] - leftSlope[row - 1]) >= 3)) { ++row; }
-                    row += 4;
-                    leftCompensateEnd = Math.Min(row, data.Height - 1);
-                }
-
-                {
-                    int row = 6;
-                    while (row < data.Height && rightBorder[row] != data.Width - 1
-                        && Math.Abs(rightSlope[row] - rightSlope[row - 1]) < 3) { ++row; }
-                    rightCompensateStart = row;
-                    row += 5;
-                    while (row < data.Height
-                        && (rightBorder[row] == data.Width - 1 || Math.Abs(rightSlope[row] - rightSlope[row - 1]) >= 3)) { ++row; }
-                    row += 4;
-                    rightCompensateEnd = Math.Min(row, data.Height - 1);
-                }
-
-                for (int row = leftCompensateStart; row < leftCompensateEnd; ++row)
-                {
-                    leftBorder[row] = row * leftSlope[leftCompensateStart - 5] + leftZero[leftCompensateStart - 5];
-                }
-
-                for (int row = rightCompensateStart; row < rightCompensateEnd; ++row)
-                {
-                    rightBorder[row] = row * rightSlope[rightCompensateStart - 5] + rightZero[rightCompensateStart - 5];
-                }
-
-                for (int row = 0; row < data.Height; ++row)
-                {
-                    middleLine[row] = (leftBorder[row] + rightBorder[row]) / 2;
-                }
+                roadFeatures.CompensateCrossRoad();
             }
 
-            for (int row = 0; row < data.Height; ++row)
-            {
-                byte* color;
-                color = (byte*)data.Scan0 + row * data.Stride + middleLine[row] * 3;
-                color[0] = 0xfe;
-                color[1] = color[2] = 0;
-                color = (byte*)data.Scan0 + row * data.Stride + leftBorder[row] * 3;
-                color[0] = 0xfe;
-                color[1] = color[2] = 0;
-                color = (byte*)data.Scan0 + row * data.Stride + rightBorder[row] * 3;
-                color[0] = 0xfe;
-                color[1] = color[2] = 0;
-            }
+            roadFeatures.HighlightBorderAndMiddleline();
 
             bitmap.UnlockBits(data);
             bitmap.RotateFlip(RotateFlipType.Rotate180FlipX);
