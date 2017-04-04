@@ -62,34 +62,29 @@ namespace FittingStraightLine
             bitmap.UnlockBits(data);
         }
 
-        enum RoadType
-        {
-            Unknown,
-            Curve,
-            CrossRoad,
-            Ring
-        };
-
         private static void UserFunction(Bitmap bitmap, string name = "")
         {
             bitmap.RotateFlip(RotateFlipType.Rotate180FlipX);
             var data = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height)
                 , ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
 
-            var roadFeatures = new RoadFeatures(data.Height, data.Width, data);
+            var roadFeatures = new RoadFeatures(data);
 
             roadFeatures.SearchForBorders();
 
             roadFeatures.CalculateSlopes();
-
-            // Just for now
-            if(roadFeatures.IsCurve)
+            
+            switch(roadFeatures.RoadType)
             {
-                roadFeatures.CompensateCurve();
-            }
-            else
-            {
-                roadFeatures.CompensateCrossRoad();
+                case RoadTypeEnum.Curve:
+                    roadFeatures.CompensateCurve();
+                    break;
+                case RoadTypeEnum.CrossRoad:
+                    roadFeatures.CompensateCrossRoad();
+                    break;
+                case RoadTypeEnum.Ring:
+                    roadFeatures.CompensateRing();
+                    break;
             }
 
             roadFeatures.HighlightBorderAndMiddleline();

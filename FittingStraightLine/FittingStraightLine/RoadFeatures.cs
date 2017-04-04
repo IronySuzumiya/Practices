@@ -8,6 +8,14 @@ using System.Drawing.Imaging;
 
 namespace FittingStraightLine
 {
+    public enum RoadTypeEnum
+    {
+        Unknown,
+        Curve,
+        CrossRoad,
+        Ring
+    };
+
     unsafe public struct RoadFeatures
     {
         public int[] rightBorder;
@@ -20,67 +28,49 @@ namespace FittingStraightLine
         public int[] middleSlope;
         public int[] middleZero;
 
-        public static readonly byte BLACK = 0x00;
-        public static readonly byte WHITE = 0xff;
+        public ImageFrame image;
 
-        public BitmapData data;
-
-        public RoadFeatures(int height, int width, BitmapData data)
+        public RoadFeatures(BitmapData data)
         {
-            rightBorder = new int[height];
-            leftBorder = new int[height];
-            middleLine = new int[height];
-            leftSlope = new int[height];
-            rightSlope = new int[height];
-            leftZero = new int[height];
-            rightZero = new int[height];
-            middleSlope = new int[height];
-            middleZero = new int[height];
-            rightBorder = new int[height];
+            image = new ImageFrame(data);
 
-            this.data = data;
+            rightBorder = new int[image.height];
+            leftBorder = new int[image.height];
+            middleLine = new int[image.height];
+            leftSlope = new int[image.height];
+            rightSlope = new int[image.height];
+            leftZero = new int[image.height];
+            rightZero = new int[image.height];
+            middleSlope = new int[image.height];
+            middleZero = new int[image.height];
+            rightBorder = new int[image.height];
 
-            for (int i = 0; i < height; ++i)
+            for (int i = 0; i < image.height; ++i)
             {
-                rightBorder[i] = width - 1;
-                rightZero[i] = width - 1;
-                middleZero[i] = width / 2;
+                rightBorder[i] = image.width - 1;
+                rightZero[i] = image.width - 1;
+                middleZero[i] = image.width / 2;
             }
-        }
-
-        private byte GetColor(int row, int col)
-        {
-            var color = (byte*)data.Scan0 + row * data.Stride + col * 3;
-            return color[0];
-        }
-
-        private void SetColor(int row, int col, byte r, byte g, byte b)
-        {
-            var color = (byte*)data.Scan0 + row * data.Stride + col * 3;
-            color[0] = r;
-            color[1] = g;
-            color[2] = b;
         }
 
         public void SearchForBorders()
         {
-            var borderSearchStart = data.Width / 2;
+            var borderSearchStart = image.width / 2;
 
-            for (int row = 0; row < data.Height; ++row)
+            for (int row = 0; row < image.height; ++row)
             {
                 for (int col = borderSearchStart - 1; col >= 0; --col)
                 {
-                    if (GetColor(row, col) == BLACK && GetColor(row, col + 1) == WHITE)
+                    if (image.IsBlack(row, col) && image.IsWhite(row, col + 1))
                     {
                         leftBorder[row] = col + 1;
                         break;
                     }
                 }
 
-                for (int col = borderSearchStart; col < data.Width - 1; ++col)
+                for (int col = borderSearchStart; col < image.width - 1; ++col)
                 {
-                    var color = (byte*)data.Scan0 + row * data.Stride + col * 3;
-                    if (GetColor(row, col) == WHITE && GetColor(row, col + 1) == BLACK)
+                    if (image.IsWhite(row, col) && image.IsBlack(row, col + 1))
                     {
                         rightBorder[row] = col;
                         break;
@@ -93,7 +83,7 @@ namespace FittingStraightLine
 
         public void CalculateSlopes()
         {
-            for (int row = 4; row < data.Height; ++row)
+            for (int row = 4; row < image.height; ++row)
             {
                 double leftSlopeX = 0, leftSlopeA = 0, leftSlopeB = 0;
                 double rightSlopeX = 0, rightSlopeA = 0, rightSlopeB = 0;
@@ -120,14 +110,43 @@ namespace FittingStraightLine
             }
         }
 
+        public bool IsCrossRoad
+        {
+            get
+            {
+                int notFoundLeftBorderCnt = 0;
+                int notFoundRightBorderCnt = 0;
+                for (int row = 0; row < image.height; ++row)
+                {
+                    if(leftBorder[row] == 0)
+                    {
+                        ++notFoundLeftBorderCnt;
+                    }
+                    if(rightBorder[row] == image.width - 1)
+                    {
+                        ++notFoundRightBorderCnt;
+                    }
+                }
+                if(notFoundLeftBorderCnt > 3 && notFoundRightBorderCnt > 3
+                    && notFoundLeftBorderCnt + notFoundRightBorderCnt > 15)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+
         public bool IsCurve
         {
             get
             {
                 int blackCnt = 0;
-                for (int row = data.Height - 1; row >= 40; --row)
+                for (int row = image.height - 1; row >= 40; --row)
                 {
-                    if (GetColor(row, middleLine[row]) == BLACK)
+                    if (image.IsBlack(row, middleLine[row]))
                     {
                         ++blackCnt;
                     }
@@ -143,12 +162,36 @@ namespace FittingStraightLine
             }
         }
 
+        public bool IsRing
+        {
+            get
+            {
+                int i;
+                for (i = image.width / 2; i >= 0; --i)
+                {
+
+                }
+                return false;
+            }
+        }
+
+        public RoadTypeEnum RoadType
+        {
+            get
+            {
+                return IsRing ? RoadTypeEnum.Ring :
+                    IsCurve ? RoadTypeEnum.Curve :
+                    IsCrossRoad ? RoadTypeEnum.CrossRoad :
+                    RoadTypeEnum.Unknown;
+            }
+        }
+
         public void CompensateCurve()
         {
             int row;
-            for (row = data.Height - 1; row > 8; --row)
+            for (row = image.height - 1; row > 8; --row)
             {
-                if (GetColor(row, middleLine[row]) == WHITE)
+                if (image.IsWhite(row, middleLine[row]))
                 {
                     break;
                 }
@@ -161,14 +204,14 @@ namespace FittingStraightLine
                 {
                     ++leftBorderNotFoundCnt;
                 }
-                if (rightBorder[row_] == data.Width - 1)
+                if (rightBorder[row_] == image.width - 1)
                 {
                     ++rightBorderNotFoundCnt;
                 }
             }
             if (leftBorderNotFoundCnt > rightBorderNotFoundCnt && leftBorderNotFoundCnt > 6)
             {
-                for (int row_ = data.Height - 1; row_ > row; --row_)
+                for (int row_ = image.height - 1; row_ > row; --row_)
                 {
                     middleLine[row_] = 0;
                 }
@@ -179,46 +222,46 @@ namespace FittingStraightLine
             }
             else if (rightBorderNotFoundCnt > 6)
             {
-                for (int row_ = data.Height - 1; row_ > row; --row_)
+                for (int row_ = image.height - 1; row_ > row; --row_)
                 {
-                    middleLine[row_] = data.Width - 1;
+                    middleLine[row_] = image.width - 1;
                 }
                 for (int cnt = 0; cnt < 12; ++cnt)
                 {
-                    middleLine[row - cnt] = data.Width - 1 - cnt * (data.Width - 1 - middleLine[row - 12]) / 12;
+                    middleLine[row - cnt] = image.width - 1 - cnt * (image.width - 1 - middleLine[row - 12]) / 12;
                 }
             }
         }
 
         public void CompensateCrossRoad()
         {
-            var leftCompensateStart = data.Height - 1;
-            var rightCompensateStart = data.Height - 1;
-            var leftCompensateEnd = data.Height - 1;
-            var rightCompensateEnd = data.Height - 1;
+            var leftCompensateStart = image.height - 1;
+            var rightCompensateStart = image.height - 1;
+            var leftCompensateEnd = image.height - 1;
+            var rightCompensateEnd = image.height - 1;
 
             {
                 int row = 6;
-                while (row < data.Height && leftBorder[row] != 0
+                while (row < image.height && leftBorder[row] != 0
                     && Math.Abs(leftSlope[row] - leftSlope[row - 1]) < 3) { ++row; }
                 leftCompensateStart = row;
                 row += 5;
-                while (row < data.Height
+                while (row < image.height
                     && (leftBorder[row] == 0 || Math.Abs(leftSlope[row] - leftSlope[row - 1]) >= 3)) { ++row; }
                 row += 4;
-                leftCompensateEnd = Math.Min(row, data.Height - 1);
+                leftCompensateEnd = Math.Min(row, image.height - 1);
             }
 
             {
                 int row = 6;
-                while (row < data.Height && rightBorder[row] != data.Width - 1
+                while (row < image.height && rightBorder[row] != image.width - 1
                     && Math.Abs(rightSlope[row] - rightSlope[row - 1]) < 3) { ++row; }
                 rightCompensateStart = row;
                 row += 5;
-                while (row < data.Height
-                    && (rightBorder[row] == data.Width - 1 || Math.Abs(rightSlope[row] - rightSlope[row - 1]) >= 3)) { ++row; }
+                while (row < image.height
+                    && (rightBorder[row] == image.width - 1 || Math.Abs(rightSlope[row] - rightSlope[row - 1]) >= 3)) { ++row; }
                 row += 4;
-                rightCompensateEnd = Math.Min(row, data.Height - 1);
+                rightCompensateEnd = Math.Min(row, image.height - 1);
             }
 
             for (int row = leftCompensateStart; row < leftCompensateEnd; ++row)
@@ -231,32 +274,24 @@ namespace FittingStraightLine
                 rightBorder[row] = row * rightSlope[rightCompensateStart - 5] + rightZero[rightCompensateStart - 5];
             }
 
-            for (int row = 0; row < data.Height; ++row)
+            for (int row = 0; row < image.height; ++row)
             {
                 middleLine[row] = (leftBorder[row] + rightBorder[row]) / 2;
             }
         }
 
-        public void HighlightBorderAndMiddleline()
+        public void CompensateRing()
         {
-            for (int row = 0; row < data.Height; ++row)
-            {
-                SetColor(row, middleLine[row], 0xfe, 0, 0);
-                SetColor(row, leftBorder[row], 0xfe, 0, 0);
-                SetColor(row, rightBorder[row], 0xfe, 0, 0);
-            }
+
         }
 
-        public bool IsRing
+        public void HighlightBorderAndMiddleline()
         {
-            get
+            for (int row = 0; row < image.height; ++row)
             {
-                int i;
-                for(i = data.Width / 2; i >= 0; --i)
-                {
-                    
-                }
-                return true;
+                image.SetColor(row, middleLine[row], 0xfe, 0, 0);
+                image.SetColor(row, leftBorder[row], 0xfe, 0, 0);
+                image.SetColor(row, rightBorder[row], 0xfe, 0, 0);
             }
         }
     }
